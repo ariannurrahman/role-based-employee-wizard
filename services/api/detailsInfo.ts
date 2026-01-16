@@ -1,0 +1,33 @@
+import { request } from './http';
+
+const BASE_URL = process.env.NEXT_PUBLIC_DETAILS_INFO_API!;
+
+export interface Location {
+  id: number;
+  name: string;
+}
+
+export interface DetailsPayload {
+  email: string;
+  fullName: string;
+  department: string;
+  role: string;
+  employeeId: string;
+  photoBase64?: string;
+}
+
+export function fetchLocations(query: string) {
+  return request<Location[]>(`${BASE_URL}/locations?name_like=${encodeURIComponent(query)}`);
+}
+
+export function submitDetails(payload: DetailsPayload) {
+  return request(`${BASE_URL}/details`, {
+    method: 'POST',
+    body: payload,
+    delayMs: 3000,
+  });
+}
+
+export function fetchDetails(page = 1, limit = 10) {
+  return request(`${BASE_URL}/details?_page=${page}&_limit=${limit}`);
+}
