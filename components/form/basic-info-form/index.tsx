@@ -5,7 +5,8 @@ import styles from './BasicInfoForm.module.css';
 import { useState, useCallback } from 'react';
 import { validateEmail } from '@/utils/validation';
 import { Autocomplete } from '@/components/autocomplete';
-import { fetchDepartments } from '@/services/api/basicInfo';
+import { fetchBasicInfo, fetchDepartments } from '@/services/api/basicInfo';
+import { generateEmployeeId } from '@/utils/generateEmployeeId';
 
 interface BasicInfoFormProps {
   data: Partial<BasicInfo>;
@@ -27,6 +28,43 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
       setEmailError('');
     }
   };
+
+  const generateAndSetEmployeeId = useCallback(
+    async (department: string, role: EmployeeRole) => {
+      try {
+        const existing = await fetchBasicInfo();
+        const deptCount = existing.filter((emp) => emp.department === department).length;
+        const employeeId = generateEmployeeId(department, deptCount);
+        console.log('employeeId', employeeId);
+        onChange({ ...data, department, role, employeeId });
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [data, onChange],
+  );
+
+  const handleDepartmentChange = useCallback(
+    (department: string) => {
+      if (data.role && department) {
+        generateAndSetEmployeeId(department, data.role);
+      } else {
+        onChange({ ...data, department });
+      }
+    },
+    [data, generateAndSetEmployeeId, onChange],
+  );
+
+  const handleRoleChange = useCallback(
+    (role: EmployeeRole) => {
+      if (data.department && role) {
+        generateAndSetEmployeeId(data.department, role);
+      } else {
+        onChange({ ...data, role });
+      }
+    },
+    [data, generateAndSetEmployeeId, onChange],
+  );
 
   const handleFetchDepartments = useCallback((query: string) => {
     return fetchDepartments(query);
@@ -67,7 +105,7 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
 
         <Autocomplete
           value={data.department || ''}
-          onSelect={(value) => onChange({ ...data, department: value })}
+          onSelect={handleDepartmentChange}
           fetchOptions={handleFetchDepartments}
           placeholder='Search department'
           label='Department'
@@ -81,7 +119,7 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
           <select
             id='role'
             value={data.role || ''}
-            onChange={(e) => onChange({ ...data, role: e.target.value as EmployeeRole })}
+            onChange={(e) => handleRoleChange(e.target.value as EmployeeRole)}
             className={styles.basicInfoForm__select}
           >
             <option value=''>Select role</option>

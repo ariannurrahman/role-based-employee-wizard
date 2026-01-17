@@ -1,3 +1,4 @@
+import { BasicInfo } from '@/types';
 import { request } from './http';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASIC_INFO_API!;
@@ -26,6 +27,6 @@ export function submitBasicInfo(payload: BasicInfoPayload) {
   });
 }
 
-export function fetchBasicInfo(page = 1, limit = 10) {
+export function fetchBasicInfo(page = 1, limit = 10): Promise<BasicInfo[]> {
   return request(`${BASE_URL}/basicInfo?_page=${page}&_limit=${limit}`);
 }
