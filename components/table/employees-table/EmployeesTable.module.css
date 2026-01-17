@@ -84,7 +84,7 @@
 }
 
 .employeesTable__table td {
-  padding: 1rem 1.5rem;
+  padding: 1rem;
   font-size: 0.875rem;
   color: #374151;
 }
@@ -112,7 +112,7 @@
 
 .employeesTable__empty {
   text-align: center;
-  padding: 3rem 1.5rem !important;
+  padding: 2rem !important;
   color: #6b7280;
   font-style: italic;
 }
@@ -120,7 +120,7 @@
 .employeesTable__loading,
 .employeesTable__error {
   text-align: center;
-  padding: 3rem 1.5rem !important;
+  padding: 2rem !important;
   font-size: 1.125rem;
 }
 

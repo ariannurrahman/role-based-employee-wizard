@@ -145,7 +145,7 @@ export const DetailInfoForm = ({
           value={data.officeLocation || ''}
           onSelect={handleLocationSelect}
           fetchOptions={fetchLocations}
-          placeholder='Enter office location'
+          placeholder='Search office location'
         />
 
         <div className={styles.detailInfoForm__field}>

@@ -18,7 +18,7 @@ export const EmployeesTable = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState<Pagination | null>(null);
-  const limit = 10;
+  const limit = 1;
 
   const loadEmployees = useCallback(
     async (page: number) => {
