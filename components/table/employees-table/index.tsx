@@ -3,23 +3,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { BasicInfo, Details } from '@/types';
 import { fetchBasicInfo } from '@/services/api/basicInfo';
 import { fetchDetails } from '@/services/api/detailsInfo';
 import styles from './EmployeesTable.module.css';
 import { Pagination } from '@/services/api/types';
+import { MergedEmployee, mergeEmployeeData } from './utils';
 
-interface MergedEmployee {
-  employeeId: string;
-  fullName: string;
-  email: string;
-  department: string;
-  role: string;
-  officeLocation?: string;
-  photo?: string;
-  employmentType?: string;
-  notes?: string;
-}
+
 
 export const EmployeesTable = () => {
   const router = useRouter();
@@ -44,6 +34,7 @@ export const EmployeesTable = () => {
 
         // Merge page-scoped data (driven by details)
         const merged = mergeEmployeeData(basicInfoResponse.data, detailsResponse.data);
+        console.log('merged', merged)
         setEmployees(merged);
         setCurrentPage(page);
         setPagination(detailsResponse);
@@ -56,53 +47,6 @@ export const EmployeesTable = () => {
     },
     [limit]
   );
-
-  const mergeEmployeeData = (
-    basicInfoPage: BasicInfo[],
-    detailsPage: Details[]
-  ): MergedEmployee[] => {
-    // Create a lookup map for the current page of basicInfo
-    const basicInfoMap = new Map<string, BasicInfo>();
-    basicInfoPage.forEach((basic) => {
-      if (basic.email) basicInfoMap.set(basic.email, basic);
-      if (basic.employeeId) basicInfoMap.set(basic.employeeId, basic);
-    });
-
-    // Drive from details (the superset) - always returns exactly detailsPage.length items
-    return detailsPage.map((detail) => {
-      // Try to find matching basicInfo by email or employeeId
-      const basicInfo =
-        basicInfoMap.get(detail.email || '') || basicInfoMap.get(detail.employeeId || '');
-
-      if (basicInfo) {
-        // Admin user: has both basicInfo and details
-        return {
-          employeeId: basicInfo.employeeId,
-          fullName: basicInfo.fullName,
-          email: basicInfo.email,
-          department: basicInfo.department,
-          role: basicInfo.role,
-          photo: detail.photo,
-          employmentType: detail.employmentType,
-          officeLocation: detail.officeLocation,
-          notes: detail.notes,
-        };
-      } else {
-        // Ops user: only has details (no basicInfo on this page)
-        return {
-          employeeId: detail.employeeId || '—',
-          fullName: '—',
-          email: detail.email || '—',
-          department: 'N/A',
-          role: 'N/A',
-          photo: detail.photo,
-          employmentType: detail.employmentType,
-          officeLocation: detail.officeLocation,
-          notes: detail.notes,
-        };
-      }
-    });
-  };
 
   useEffect(() => {
     loadEmployees(1);
@@ -162,7 +106,7 @@ export const EmployeesTable = () => {
               </tr>
             ) : (
               employees.map((employee) => (
-                <tr key={employee.employeeId}>
+                <tr key={employee.id}>
                   <td>
                     {employee.photo ? (
                       <Image

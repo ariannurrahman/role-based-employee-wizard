@@ -10,6 +10,7 @@ export interface BasicInfo {
   department: string;
   role: EmployeeRole;
   employeeId: string;
+  id:string;
 }
 
 export interface Details {
@@ -19,6 +20,7 @@ export interface Details {
   notes?: string;
   email?: string; // For merging
   employeeId?: string; // For merging
+  id: string;
 }
 
 export interface Employee {
