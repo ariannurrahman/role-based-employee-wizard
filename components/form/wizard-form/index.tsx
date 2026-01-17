@@ -7,13 +7,9 @@ import { StepIndicator } from '@/components/step-indicator';
 
 import styles from './WizardForm.module.css';
 import { useWizardForm } from './useWizardForm';
-
-/**
- * WizardForm component
- * @returns {JSX.Element}
- */
-
+import { useRouter } from 'next/navigation';
 export const WizardForm = () => {
+  const router = useRouter();
   const {
     role,
     currentStep,
@@ -37,12 +33,15 @@ export const WizardForm = () => {
     logs,
   } = useWizardForm();
  
+  const onClickBack = () => {
+    router.push('/employees');
+  };
 
   return (
     <div className={styles.wizardForm}>
       <header className={styles.wizardForm__header}>
         <div className={styles.wizardForm__headerTop}>
-          <h1 className={styles.wizardForm__title}>Employee Wizard</h1>
+          <h1 className={styles.wizardForm__title}><button type='button' aria-label='Back to employee list' className={styles.wizardForm__backToEmployeeButton} onClick={onClickBack}>←</button> Employee Wizard</h1>
           <div className={styles.wizardForm__roleSelectorWrapper}>
             <RoleSelector value={role || ''} onChange={handleRoleChange} hasError={showInvalidRoleError} />
             {showInvalidRoleError && (
