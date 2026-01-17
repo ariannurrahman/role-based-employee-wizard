@@ -5,12 +5,16 @@
 }
 
 .wizardForm__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid #e5e7eb;
+}
+
+.wizardForm__headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
 }
 
 .wizardForm__title {
@@ -32,6 +36,69 @@
   color: #ef4444;
   font-weight: 500;
   animation: slideDown 0.2s ease-out;
+}
+
+.wizardForm__draftStatus {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 1.25rem;
+  gap: 1rem;
+}
+
+.wizardForm__draftStatusLeft {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.wizardForm__savingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.wizardForm__savingDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.wizardForm__savedIndicator {
+  font-size: 0.75rem;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.wizardForm__clearDraftButton {
+  padding: 0.375rem 0.75rem;
+  background-color: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.wizardForm__clearDraftButton:hover {
+  background-color: #fef2f2;
+  color: #ef4444;
+  border-color: #fecaca;
+}
+
+.wizardForm__clearDraftButton:active {
+  transform: translateY(1px);
 }
 
 @keyframes slideDown {
@@ -113,7 +180,7 @@
     padding: 1rem;
   }
 
-  .wizardForm__header {
+  .wizardForm__headerTop {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
@@ -129,6 +196,22 @@
   }
 
   .wizardForm__errorMessage {
+    font-size: 0.7rem;
+  }
+
+  .wizardForm__draftStatus {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .wizardForm__draftStatusLeft {
+    justify-content: flex-start;
+  }
+
+  .wizardForm__savingIndicator,
+  .wizardForm__savedIndicator,
+  .wizardForm__clearDraftButton {
     font-size: 0.7rem;
   }
 
