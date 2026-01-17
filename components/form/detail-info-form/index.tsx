@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Details, EmploymentType } from '@/types';
-import { fileToBase64 } from '@/utils/file';
-import styles from './DetailInfoForm.module.css';
 import Image from 'next/image';
+
+import { fileToBase64 } from '@/utils/file';
 import { Autocomplete } from '@/components/autocomplete';
 import { fetchLocations } from '@/services/api/detailsInfo';
+
+import styles from './DetailInfoForm.module.css';
 
 /**
  * Props for the DetailInfoForm component
@@ -44,6 +46,15 @@ export const DetailInfoForm = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(data.photo || null);
 
+  // Sync photo preview with data.photo (for draft loading from localStorage)
+  useEffect(() => {
+    if (data.photo) {
+      requestAnimationFrame(() => {
+        setPhotoPreview(data.photo || null);
+      });
+    }
+  }, [data.photo]);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -71,6 +82,21 @@ export const DetailInfoForm = ({
             Photo
           </label>
           <div className={styles.detailInfoForm__photoSection}>
+            {photoPreview ? (
+              <div>
+                <Image
+                  src={photoPreview}
+                  alt='Preview'
+                  className={styles.detailInfoForm__previewImage}
+                  width={100}
+                  height={100}
+                />
+              </div>
+            ) : (
+              <div>
+                <p>No photo selected</p>
+              </div>
+            )}
             <input
               ref={fileInputRef}
               id='photo'
@@ -86,17 +112,6 @@ export const DetailInfoForm = ({
             >
               Choose File
             </button>
-            {photoPreview && (
-              <div className={styles.detailInfoForm__preview}>
-                <Image
-                  src={photoPreview}
-                  alt='Preview'
-                  className={styles.detailInfoForm__previewImage}
-                  width={100}
-                  height={100}
-                />
-              </div>
-            )}
           </div>
         </div>
 

@@ -34,7 +34,8 @@
 
 .detailInfoForm__photoSection {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: 1rem;
 }
 
@@ -52,10 +53,6 @@
 
 .detailInfoForm__uploadButton:hover {
   background-color: #e5e5e5;
-}
-
-.detailInfoForm__preview {
-  margin-top: 1rem;
 }
 
 .detailInfoForm__previewImage {
