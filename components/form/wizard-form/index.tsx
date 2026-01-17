@@ -33,15 +33,30 @@ import styles from './WizardForm.module.css';
  *
  * @returns {JSX.Element} The complete wizard form with role-based navigation
  */
+const VALID_ROLES: Role[] = ['admin', 'ops'];
+
+/**
+ * Validates if a string is a valid Role
+ */
+const isValidRole = (value: string | null): value is Role => {
+  return value !== null && VALID_ROLES.includes(value as Role);
+};
+
 export const WizardForm = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  // Initialize role from URL or default to 'admin'
-  const urlRole = (searchParams.get('role') as Role) || 'admin';
-  const [role, setRole] = useState<Role>(urlRole);
-  const [currentStep, setCurrentStep] = useState<1 | 2>(urlRole === 'ops' ? 2 : 1);
+  // Validate role from URL
+  const urlRoleParam = searchParams.get('role');
+  const hasInvalidRole = urlRoleParam !== null && !isValidRole(urlRoleParam);
+
+  // Default to 'admin' only if no role param exists, otherwise use null for invalid roles
+  const initialRole = urlRoleParam === null ? 'admin' : isValidRole(urlRoleParam) ? urlRoleParam : null;
+
+  const [role, setRole] = useState<Role | null>(initialRole);
+  const [currentStep, setCurrentStep] = useState<1 | 2>(role === 'ops' ? 2 : 1);
+  const [showInvalidRoleError, setShowInvalidRoleError] = useState(hasInvalidRole);
 
   const [basicInfo, setBasicInfo] = useState<Partial<BasicInfo>>({});
   const [details, setDetails] = useState<Partial<Details>>({});
@@ -57,12 +72,16 @@ export const WizardForm = () => {
   const handleRoleChange = (newRole: Role) => {
     setRole(newRole);
     setCurrentStep(newRole === 'ops' ? 2 : 1);
+    setShowInvalidRoleError(false);
 
     // Update URL
     const params = new URLSearchParams(searchParams.toString());
     params.set('role', newRole);
     router.push(`${pathname}?${params.toString()}`);
   };
+
+  // Don't render forms if role is invalid
+  const shouldRenderForms = role !== null;
 
   /** Validates basic information form fields */
   const isValidBasicInfoForm = useMemo(() => {
@@ -120,40 +139,54 @@ export const WizardForm = () => {
     <div className={styles.wizardForm}>
       <header className={styles.wizardForm__header}>
         <h1 className={styles.wizardForm__title}>Employee Wizard</h1>
-        <RoleSelector value={role} onChange={handleRoleChange} />
+        <div className={styles.wizardForm__roleSelectorWrapper}>
+          <RoleSelector value={role || ''} onChange={handleRoleChange} hasError={showInvalidRoleError} />
+          {showInvalidRoleError && (
+            <span className={styles.wizardForm__errorMessage}>Invalid role in URL. Please select a valid role.</span>
+          )}
+        </div>
       </header>
 
-      <StepIndicator currentStep={currentStep} role={role} totalSteps={2} />
+      {shouldRenderForms ? (
+        <>
+          <StepIndicator currentStep={currentStep} role={role} totalSteps={2} />
 
-      <main className={styles.wizardForm__content}>
-        {currentStep === 1 && role === 'admin' && (
-          <BasicInfoForm
-            data={basicInfo}
-            onChange={handleBasicInfoChange}
-            onNext={handleNext}
-            isValidForm={isValidBasicInfoForm}
-          />
-        )}
-
-        {currentStep === 2 && (
-          <>
-            {role === 'admin' && (
-              <button type='button' onClick={handleBack} className={styles.wizardForm__backButton}>
-                ← Back to Basic Info
-              </button>
+          <main className={styles.wizardForm__content}>
+            {currentStep === 1 && role === 'admin' && (
+              <BasicInfoForm
+                data={basicInfo}
+                onChange={handleBasicInfoChange}
+                onNext={handleNext}
+                isValidForm={isValidBasicInfoForm}
+              />
             )}
-            <DetailInfoForm
-              data={details}
-              onChange={handleDetailsChange}
-              onSubmit={handleSubmit}
-              isSubmitting={isSubmitting}
-              progress={progress}
-              logs={logs}
-              isValidForm={isValidDetailsForm}
-            />
-          </>
-        )}
-      </main>
+
+            {currentStep === 2 && (
+              <>
+                {role === 'admin' && (
+                  <button type='button' onClick={handleBack} className={styles.wizardForm__backButton}>
+                    ← Back to Basic Info
+                  </button>
+                )}
+                <DetailInfoForm
+                  data={details}
+                  onChange={handleDetailsChange}
+                  onSubmit={handleSubmit}
+                  isSubmitting={isSubmitting}
+                  progress={progress}
+                  logs={logs}
+                  isValidForm={isValidDetailsForm}
+                />
+              </>
+            )}
+          </main>
+        </>
+      ) : (
+        <div className={styles.wizardForm__invalidState}>
+          <div className={styles.wizardForm__invalidIcon}>⚠️</div>
+          <p className={styles.wizardForm__invalidText}>Please select a valid role to continue</p>
+        </div>
+      )}
     </div>
   );
 };

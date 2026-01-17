@@ -43,6 +43,16 @@
   cursor: not-allowed;
 }
 
+.roleSelector__select--error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.roleSelector__select--error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
 @media (max-width: 640px) {
   .roleSelector {
     width: 100%;

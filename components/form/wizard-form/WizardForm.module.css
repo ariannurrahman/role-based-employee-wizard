@@ -20,6 +20,31 @@
   margin: 0;
 }
 
+.wizardForm__roleSelectorWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.wizardForm__errorMessage {
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 500;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .wizardForm__content {
   margin-top: 2rem;
 }
@@ -49,6 +74,39 @@
   transform: translateY(1px);
 }
 
+.wizardForm__invalidState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  min-height: 300px;
+}
+
+.wizardForm__invalidIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.wizardForm__invalidText {
+  font-size: 1.125rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin: 0;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .wizardForm {
@@ -63,6 +121,15 @@
 
   .wizardForm__title {
     font-size: 1.5rem;
+  }
+
+  .wizardForm__roleSelectorWrapper {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .wizardForm__errorMessage {
+    font-size: 0.7rem;
   }
 
   .wizardForm__steps {

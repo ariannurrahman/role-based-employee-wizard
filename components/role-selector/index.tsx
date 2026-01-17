@@ -8,12 +8,14 @@ import styles from './RoleSelector.module.css';
  * @interface RoleSelectorProps
  */
 interface RoleSelectorProps {
-  /** The currently selected role */
-  value: Role;
+  /** The currently selected role (or empty string for no selection) */
+  value: Role | '';
   /** Callback function triggered when the role changes */
   onChange: (role: Role) => void;
   /** Whether the selector is disabled */
   disabled?: boolean;
+  /** Whether the selector has an error state */
+  hasError?: boolean;
 }
 
 const ROLES: Array<{ value: Role; label: string }> = [
@@ -21,9 +23,12 @@ const ROLES: Array<{ value: Role; label: string }> = [
   { value: 'ops', label: 'Ops' },
 ];
 
-export const RoleSelector = ({ value, onChange, disabled = false }: RoleSelectorProps) => {
+export const RoleSelector = ({ value, onChange, disabled = false, hasError = false }: RoleSelectorProps) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(event.target.value as Role);
+    const selectedValue = event.target.value;
+    if (selectedValue) {
+      onChange(selectedValue as Role);
+    }
   };
 
   return (
@@ -36,9 +41,15 @@ export const RoleSelector = ({ value, onChange, disabled = false }: RoleSelector
         value={value}
         onChange={handleChange}
         disabled={disabled}
-        className={styles.roleSelector__select}
+        className={`${styles.roleSelector__select} ${hasError ? styles['roleSelector__select--error'] : ''}`}
         aria-label='Select user role'
+        aria-invalid={hasError}
       >
+        {value === '' && (
+          <option value='' disabled>
+            -- Select a role --
+          </option>
+        )}
         {ROLES.map(({ value, label }) => (
           <option key={value} value={value}>
             {label}
