@@ -5,6 +5,8 @@ import { Details, EmploymentType } from '@/types';
 import { fileToBase64 } from '@/utils/file';
 import styles from './DetailInfoForm.module.css';
 import Image from 'next/image';
+import { Autocomplete } from '@/components/autocomplete';
+import { fetchLocations } from '@/services/api/detailsInfo';
 
 /**
  * Props for the DetailInfoForm component
@@ -122,19 +124,14 @@ export const DetailInfoForm = ({
           </select>
         </div>
 
-        <div className={styles.detailInfoForm__field}>
-          <label htmlFor='officeLocation' className={styles.detailInfoForm__label}>
-            Office Location
-          </label>
-          <input
-            id='officeLocation'
-            type='text'
-            value={data.officeLocation || ''}
-            onChange={(e) => handleLocationSelect(e.target.value)}
-            className={styles.detailInfoForm__input}
-            placeholder='Enter office location'
-          />
-        </div>
+        <Autocomplete
+          id='officeLocation'
+          label='Office Location'
+          value={data.officeLocation || ''}
+          onSelect={handleLocationSelect}
+          fetchOptions={fetchLocations}
+          placeholder='Enter office location'
+        />
 
         <div className={styles.detailInfoForm__field}>
           <label htmlFor='notes' className={styles.detailInfoForm__label}>
