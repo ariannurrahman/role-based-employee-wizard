@@ -249,7 +249,6 @@ export const WizardForm = () => {
         router.push('/employees');
       }, 1500);
     } catch (error) {
-      console.error('Submission error:', error);
       setLogs((prev) => [...prev, `❌ Error: ${error instanceof Error ? error.message : 'Submission failed'}`]);
       setProgress(0);
       setIsSubmitting(false);
