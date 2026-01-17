@@ -1,17 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './Autocomplete.module.css';
 
+/**
+ * Props for the Autocomplete component
+ * @interface AutocompleteProps
+ */
+
 interface Option {
+  /** The id of the option */
   id: number | string;
+  /** The name of the option */
   name: string;
 }
 
 interface AutocompleteProps {
+  /** The id of the autocomplete */
   id: string;
+  /** The label of the autocomplete */
   label: string;
+  /** The value of the autocomplete */
   value?: string;
+  /** The placeholder of the autocomplete */
   placeholder?: string;
+  /** The function to fetch the options */
   fetchOptions: (query: string) => Promise<Option[]>;
+  /** The function to select the option */
   onSelect: (value: string) => void;
 }
 

@@ -2,25 +2,43 @@
 
 import { useState, useRef } from 'react';
 import { Details, EmploymentType } from '@/types';
-// import { fetchLocations } from '@/services/api/detailsInfo';
 import { fileToBase64 } from '@/utils/file';
-// import Autocomplete from '../Autocomplete/Autocomplete';
 import styles from './DetailInfoForm.module.css';
 import Image from 'next/image';
 
+/**
+ * Props for the DetailInfoForm component
+ * @interface DetailInfoFormProps
+ */
+
 interface DetailInfoFormProps {
+  /** The current data for the detail information form */
   data: Partial<Details>;
+  /** Callback function triggered when the data changes */
   onChange: (data: Partial<Details>) => void;
+  /** Callback function triggered when the submit button is clicked */
   onSubmit: () => void;
+  /** Whether the form is submitting */
   isSubmitting: boolean;
+  /** The progress percentage */
   progress: number;
+  /** The logs for the form */
   logs: string[];
+  /** Whether the form is valid */
   isValidForm?: boolean;
 }
 
 const EMPLOYMENT_TYPES: EmploymentType[] = ['Full-time', 'Part-time', 'Contract', 'Intern'];
 
-export const DetailInfoForm = ({ data, onChange, onSubmit, isSubmitting, progress, logs, isValidForm }: DetailInfoFormProps) => {
+export const DetailInfoForm = ({
+  data,
+  onChange,
+  onSubmit,
+  isSubmitting,
+  progress,
+  logs,
+  isValidForm,
+}: DetailInfoFormProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(data.photo || null);
 
@@ -59,12 +77,22 @@ export const DetailInfoForm = ({ data, onChange, onSubmit, isSubmitting, progres
               onChange={handleFileChange}
               className={styles.detailInfoForm__fileInput}
             />
-            <button type='button' onClick={() => fileInputRef.current?.click()} className={styles.detailInfoForm__uploadButton}>
+            <button
+              type='button'
+              onClick={() => fileInputRef.current?.click()}
+              className={styles.detailInfoForm__uploadButton}
+            >
               Choose File
             </button>
             {photoPreview && (
               <div className={styles.detailInfoForm__preview}>
-                <Image src={photoPreview} alt='Preview' className={styles.detailInfoForm__previewImage} width={100} height={100} />
+                <Image
+                  src={photoPreview}
+                  alt='Preview'
+                  className={styles.detailInfoForm__previewImage}
+                  width={100}
+                  height={100}
+                />
               </div>
             )}
           </div>
@@ -94,15 +122,19 @@ export const DetailInfoForm = ({ data, onChange, onSubmit, isSubmitting, progres
           </select>
         </div>
 
-        {/* <Autocomplete
-          value={data.officeLocation || ''}
-          onChange={(value) => onChange({ ...data, officeLocation: value })}
-          onSelect={handleLocationSelect}
-          fetchOptions={fetchLocations}
-          placeholder='Search location'
-          label='Office Location'
-          id='officeLocation'
-        /> */}
+        <div className={styles.detailInfoForm__field}>
+          <label htmlFor='officeLocation' className={styles.detailInfoForm__label}>
+            Office Location
+          </label>
+          <input
+            id='officeLocation'
+            type='text'
+            value={data.officeLocation || ''}
+            onChange={(e) => handleLocationSelect(e.target.value)}
+            className={styles.detailInfoForm__input}
+            placeholder='Enter office location'
+          />
+        </div>
 
         <div className={styles.detailInfoForm__field}>
           <label htmlFor='notes' className={styles.detailInfoForm__label}>
@@ -137,7 +169,9 @@ export const DetailInfoForm = ({ data, onChange, onSubmit, isSubmitting, progres
           type='button'
           onClick={onSubmit}
           disabled={isSubmitting || !isValidForm}
-          className={`${styles.detailInfoForm__button} ${(isSubmitting || !isValidForm) ? styles['detailInfoForm__button--disabled'] : ''}`}
+          className={`${styles.detailInfoForm__button} ${
+            isSubmitting || !isValidForm ? styles['detailInfoForm__button--disabled'] : ''
+          }`}
         >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>

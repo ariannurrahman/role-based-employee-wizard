@@ -76,6 +76,16 @@
   font-family: inherit;
 }
 
+.detailInfoForm__input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
 .detailInfoForm__select {
   width: 100%;
   padding: 0.75rem 2.5rem 0.75rem 0.75rem;
@@ -95,6 +105,7 @@
   background-size: 1.25rem;
 }
 
+.detailInfoForm__input:focus,
 .detailInfoForm__select:focus,
 .detailInfoForm__textarea:focus {
   outline: none;

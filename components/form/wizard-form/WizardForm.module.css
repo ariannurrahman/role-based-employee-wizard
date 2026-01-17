@@ -1,0 +1,83 @@
+.wizardForm {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.wizardForm__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.wizardForm__title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.wizardForm__content {
+  margin-top: 2rem;
+}
+
+.wizardForm__backButton {
+  padding: 0.625rem 1.25rem;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wizardForm__backButton:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.wizardForm__backButton:active {
+  transform: translateY(1px);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .wizardForm {
+    padding: 1rem;
+  }
+
+  .wizardForm__header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .wizardForm__title {
+    font-size: 1.5rem;
+  }
+
+  .wizardForm__steps {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .wizardForm__stepConnector {
+    width: 2px;
+    height: 2rem;
+    margin: 0.5rem 0;
+  }
+
+  .wizardForm__stepLabel {
+    font-size: 0.75rem;
+  }
+}
+

@@ -8,10 +8,19 @@ import { Autocomplete } from '@/components/autocomplete';
 import { fetchBasicInfo, fetchDepartments } from '@/services/api/basicInfo';
 import { generateEmployeeId } from '@/utils/generateEmployeeId';
 
+/**
+ * Props for the BasicInfoForm component
+ * @interface BasicInfoFormProps
+ */
+
 interface BasicInfoFormProps {
+  /** The current data for the basic information form */
   data: Partial<BasicInfo>;
+  /** Callback function triggered when the data changes */
   onChange: (data: Partial<BasicInfo>) => void;
+  /** Callback function triggered when the next button is clicked */
   onNext: () => void;
+  /** Whether the form is valid */
   isValidForm: boolean;
 }
 
@@ -35,7 +44,6 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
         const existing = await fetchBasicInfo();
         const deptCount = existing.filter((emp) => emp.department === department).length;
         const employeeId = generateEmployeeId(department, deptCount);
-        console.log('employeeId', employeeId);
         onChange({ ...data, department, role, employeeId });
       } catch (error) {
         console.error(error);
