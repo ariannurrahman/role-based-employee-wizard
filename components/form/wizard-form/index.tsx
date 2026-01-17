@@ -9,6 +9,8 @@ import { RoleSelector } from '@/components/role-selector';
 import { StepIndicator } from '@/components/step-indicator';
 import { validateBasicInfo, validateDetails } from '@/utils/validation';
 import { saveDraft, loadDraft, clearDraft } from '@/utils/storage';
+import { submitBasicInfo, BasicInfoPayload } from '@/services/api/basicInfo';
+import { submitDetails, DetailsPayload } from '@/services/api/detailsInfo';
 
 import styles from './WizardForm.module.css';
 
@@ -63,9 +65,9 @@ export const WizardForm = () => {
   const [basicInfo, setBasicInfo] = useState<Partial<BasicInfo>>({});
   const [details, setDetails] = useState<Partial<Details>>({});
 
-  const [isSubmitting] = useState(false);
-  const [progress] = useState(0);
-  const [logs] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [logs, setLogs] = useState<string[]>([]);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -189,18 +191,69 @@ export const WizardForm = () => {
   };
 
   /** Handles final form submission */
-  const handleSubmit = useCallback(() => {
-    if (isValidDetailsForm && role) {
-      console.log('submit', { basicInfo, details });
+  const handleSubmit = useCallback(async () => {
+    if (!isValidDetailsForm || !role) return;
+
+    setIsSubmitting(true);
+    setProgress(0);
+    setLogs([]);
+
+    try {
+      // Step 1: Submit Basic Info (Admin only)
+      if (role === 'admin' && basicInfo) {
+        setLogs((prev) => [...prev, '⏳ Submitting basicInfo...']);
+        setProgress(25);
+
+        const basicInfoPayload: BasicInfoPayload = {
+          email: basicInfo.email || '',
+          employmentType: details.employmentType || '',
+          location: details.officeLocation || '',
+          notes: details.notes,
+        };
+
+        await submitBasicInfo(basicInfoPayload);
+
+        setLogs((prev) => [...prev, '✅ basicInfo saved!']);
+        setProgress(50);
+      } else {
+        // For Ops, skip to 50% since they don't submit basicInfo
+        setProgress(50);
+      }
+
+      // Step 2: Submit Details
+      setLogs((prev) => [...prev, '⏳ Submitting details...']);
+      setProgress(75);
+
+      const detailsPayload: DetailsPayload = {
+        email: basicInfo.email || '',
+        fullName: basicInfo.fullName || '',
+        department: basicInfo.department || '',
+        role: basicInfo.role || '',
+        employeeId: basicInfo.employeeId || '',
+        photoBase64: details.photo,
+      };
+
+      await submitDetails(detailsPayload);
+
+      setLogs((prev) => [...prev, '✅ details saved!']);
+      setProgress(100);
+      setLogs((prev) => [...prev, '🎉 All data processed successfully!']);
 
       // Clear the draft after successful submission
       clearDraft(role);
       setLastSaved(null);
 
-      // Add your submit logic here
-      // e.g., API call to save employee data
+      // Redirect to employees list after a short delay
+      setTimeout(() => {
+        router.push('/employees');
+      }, 1500);
+    } catch (error) {
+      console.error('Submission error:', error);
+      setLogs((prev) => [...prev, `❌ Error: ${error instanceof Error ? error.message : 'Submission failed'}`]);
+      setProgress(0);
+      setIsSubmitting(false);
     }
-  }, [isValidDetailsForm, role, basicInfo, details]);
+  }, [isValidDetailsForm, role, basicInfo, details, router]);
 
   /** Returns to the previous step (Admin only) */
   const handleBack = () => {
