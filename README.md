@@ -2,6 +2,9 @@
 
 A Next.js application for managing employee information with a role-based multi-step wizard form. This is a test/demo project that uses json-server as a mock backend.
 
+#### [Live URL](https://role-based-employee-wizard.vercel.app/)
+#### [Github URL](https://github.com/ariannurrahman/role-based-employee-wizard)
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
