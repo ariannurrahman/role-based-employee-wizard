@@ -1,7 +1,5 @@
-import { fetchLocations } from '@/services/api/detailsInfo';
+import { WizardForm } from '@/components/form/wizard-form';
 
 export default async function WizardPage() {
-  const locations = await fetchLocations('');
-  console.log('locations', locations);
-  return <div>WizardPage</div>;
+  return <WizardForm />;
 }
