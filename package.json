@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "mock:step1": "json-server --watch db-step1.json --port 4001",
-    "mock:step2": "json-server --watch db-step2.json --port 4002"
+    "mock:step2": "json-server --watch db-step2.json --port 4002",
+    "test": "jest"
   },
   "dependencies": {
     "next": "16.1.2",
@@ -16,12 +17,17 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.28.6",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-jest": "^30.2.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.2",
     "jest": "^30.2.0",
