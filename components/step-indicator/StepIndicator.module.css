@@ -42,12 +42,28 @@
   transition: all 0.3s ease;
 }
 
+.stepIndicator__labelWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .stepIndicator__label {
   font-size: 0.875rem;
   font-weight: 500;
   color: #9ca3af;
   white-space: nowrap;
   transition: all 0.3s ease;
+  text-align: center;
+}
+
+.stepIndicator__subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #d1d5db;
+  font-style: italic;
+  white-space: nowrap;
   text-align: center;
 }
 

@@ -12,6 +12,8 @@ export interface Step {
   number: number;
   /** Display label for the step */
   label: string;
+  /** Optional subtitle/badge text shown below the label */
+  subtitle?: string;
   /** Whether this step is currently active */
   isActive: boolean;
   /** Whether this step has been completed */
@@ -50,7 +52,8 @@ export const StepIndicator = ({ currentStep, role, totalSteps = 2 }: StepIndicat
 
       steps.push({
         number: i,
-        label: isStepOneForOps ? `${config.label} (Admin Only)` : config.label,
+        label: config.label,
+        subtitle: isStepOneForOps ? '(Admin Only)' : undefined,
         isActive: currentStep === i && !isStepOneForOps,
         isCompleted: currentStep > i && !isStepOneForOps,
         isDisabled: isStepOneForOps,
@@ -75,7 +78,10 @@ export const StepIndicator = ({ currentStep, role, totalSteps = 2 }: StepIndicat
               aria-disabled={step.isDisabled}
             >
               <span className={styles.stepIndicator__number}>{step.number}</span>
-              <span className={styles.stepIndicator__label}>{step.label}</span>
+              <div className={styles.stepIndicator__labelWrapper}>
+                <span className={styles.stepIndicator__label}>{step.label}</span>
+                {step.subtitle && <span className={styles.stepIndicator__subtitle}>{step.subtitle}</span>}
+              </div>
             </div>
             {index < steps.length - 1 && <div className={styles.stepIndicator__connector} aria-hidden='true' />}
           </div>
