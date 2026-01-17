@@ -11,6 +11,25 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function request<T>(url: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', body, delayMs } = options;
 
+  // Check if URL contains 'undefined' (missing environment variable)
+  if (url.includes('undefined')) {
+    const errorMessage =
+      `⚠️ Missing Environment Variables!\n\n` +
+      `This app requires backend API URLs to be configured.\n\n` +
+      `For local development:\n` +
+      `1. Copy env.example to .env.local\n` +
+      `2. Run the mock backend servers:\n` +
+      `   → npm run mock:step1  (port 4001)\n` +
+      `   → npm run mock:step2  (port 4002)\n\n` +
+      `If deployed to Vercel/production:\n` +
+      `⚠️  This app is designed for LOCAL DEVELOPMENT ONLY.\n` +
+      `   It requires json-server running on localhost.\n\n` +
+      `See README.md for complete setup instructions.`;
+    
+    console.error('[API ERROR]', errorMessage);
+    throw new Error(errorMessage);
+  }
+
   try {
     if (delayMs) {
       await delay(delayMs);
@@ -26,9 +45,17 @@ export async function request<T>(url: string, options: RequestOptions = {}): Pro
 
     if (!res.ok) {
       // Create a helpful error message for HTTP errors (404, 500, etc.)
-      const backendUrl = new URL(url).origin;
-      const isPort4001 = backendUrl.includes('4001');
-      const isPort4002 = backendUrl.includes('4002');
+      let backendUrl = '';
+      let isPort4001 = false;
+      let isPort4002 = false;
+      
+      try {
+        backendUrl = new URL(url).origin;
+        isPort4001 = backendUrl.includes('4001');
+        isPort4002 = backendUrl.includes('4002');
+      } catch {
+        // Invalid URL, will use default message
+      }
       
       throw new Error(
         `⚠️ Backend server is not responding (HTTP ${res.status})!\n\n` +
@@ -45,11 +72,24 @@ export async function request<T>(url: string, options: RequestOptions = {}): Pro
   } catch (error) {
     console.error('[API ERROR]', url, error);
     
+    // Re-throw if it's already our custom error
+    if (error instanceof Error && error.message.includes('⚠️')) {
+      throw error;
+    }
+    
     // Check if it's a network error (CORS, connection refused, etc.)
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      const backendUrl = new URL(url).origin;
-      const isPort4001 = backendUrl.includes('4001');
-      const isPort4002 = backendUrl.includes('4002');
+      let backendUrl = '';
+      let isPort4001 = false;
+      let isPort4002 = false;
+      
+      try {
+        backendUrl = new URL(url).origin;
+        isPort4001 = backendUrl.includes('4001');
+        isPort4002 = backendUrl.includes('4002');
+      } catch {
+        // Invalid URL, will use default message
+      }
       
       throw new Error(
         `⚠️ Cannot connect to backend server!\n\n` +
