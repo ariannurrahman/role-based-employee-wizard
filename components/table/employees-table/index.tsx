@@ -7,6 +7,7 @@ import { BasicInfo, Details } from '@/types';
 import { fetchBasicInfo } from '@/services/api/basicInfo';
 import { fetchDetails } from '@/services/api/detailsInfo';
 import styles from './EmployeesTable.module.css';
+import { Pagination } from '@/services/api/types';
 
 interface MergedEmployee {
   employeeId: string;
@@ -26,70 +27,94 @@ export const EmployeesTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
   const limit = 10;
 
-  const loadEmployees = useCallback(async (page: number) => {
-    setIsLoading(true);
-    setError(null);
+  const loadEmployees = useCallback(
+    async (page: number) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const [basicInfoData, detailsData] = await Promise.all([fetchBasicInfo(page, limit), fetchDetails(page, limit)]);
+      try {
+        // Fetch both APIs with same pagination
+        const [basicInfoResponse, detailsResponse] = await Promise.all([
+          fetchBasicInfo(page, limit),
+          fetchDetails(page, limit),
+        ]);
 
-      // Merge data using email or employeeId as identifier
-      const merged = mergeEmployeeData(basicInfoData, detailsData as Details[]);
-      setEmployees(merged);
+        // Merge page-scoped data (driven by details)
+        const merged = mergeEmployeeData(basicInfoResponse.data, detailsResponse.data);
+        setEmployees(merged);
+        setCurrentPage(page);
+        setPagination(detailsResponse);
+      } catch (err) {
+        console.error('Failed to load employees:', err);
+        setError('Failed to load employees. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [limit]
+  );
 
-      // Calculate total pages (assuming both APIs return similar counts)
-      // In a real app, you'd get this from response headers or API
-      setTotalPages(Math.max(1, Math.ceil(merged.length / limit)));
-    } catch (err) {
-      console.error('Failed to load employees:', err);
-      setError('Failed to load employees. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const mergeEmployeeData = (basicInfo: BasicInfo[], details: Details[]): MergedEmployee[] => {
-    const detailsMap = new Map<string, Details>();
-
-    // Build map with both email and employeeId as keys for flexible merging
-    details.forEach((d) => {
-      if (d.email) detailsMap.set(d.email, d);
-      if (d.employeeId) detailsMap.set(d.employeeId, d);
+  const mergeEmployeeData = (
+    basicInfoPage: BasicInfo[],
+    detailsPage: Details[]
+  ): MergedEmployee[] => {
+    // Create a lookup map for the current page of basicInfo
+    const basicInfoMap = new Map<string, BasicInfo>();
+    basicInfoPage.forEach((basic) => {
+      if (basic.email) basicInfoMap.set(basic.email, basic);
+      if (basic.employeeId) basicInfoMap.set(basic.employeeId, basic);
     });
 
-    return basicInfo.map((basic) => {
-      // Find matching details using email or employeeId
-      const detail = detailsMap.get(basic.email) || detailsMap.get(basic.employeeId);
+    // Drive from details (the superset) - always returns exactly detailsPage.length items
+    return detailsPage.map((detail) => {
+      // Try to find matching basicInfo by email or employeeId
+      const basicInfo =
+        basicInfoMap.get(detail.email || '') || basicInfoMap.get(detail.employeeId || '');
 
-      return {
-        // From BasicInfo (port 4001)
-        employeeId: basic.employeeId,
-        fullName: basic.fullName,
-        email: basic.email,
-        department: basic.department,
-        role: basic.role,
-        // From Details (port 4002)
-        photo: detail?.photo,
-        employmentType: detail?.employmentType,
-        officeLocation: detail?.officeLocation,
-        notes: detail?.notes,
-      };
+      if (basicInfo) {
+        // Admin user: has both basicInfo and details
+        return {
+          employeeId: basicInfo.employeeId,
+          fullName: basicInfo.fullName,
+          email: basicInfo.email,
+          department: basicInfo.department,
+          role: basicInfo.role,
+          photo: detail.photo,
+          employmentType: detail.employmentType,
+          officeLocation: detail.officeLocation,
+          notes: detail.notes,
+        };
+      } else {
+        // Ops user: only has details (no basicInfo on this page)
+        return {
+          employeeId: detail.employeeId || '—',
+          fullName: '—',
+          email: detail.email || '—',
+          department: 'N/A',
+          role: 'N/A',
+          photo: detail.photo,
+          employmentType: detail.employmentType,
+          officeLocation: detail.officeLocation,
+          notes: detail.notes,
+        };
+      }
     });
   };
 
   useEffect(() => {
-    loadEmployees(currentPage);
-  }, [currentPage, loadEmployees]);
+    loadEmployees(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAddEmployee = () => {
     router.push('/wizard');
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    loadEmployees(page);
   };
 
   if (isLoading) {
@@ -107,7 +132,6 @@ export const EmployeesTable = () => {
       </div>
     );
   }
-  console.log('employees', employees);
 
   return (
     <div className={styles.employeesTable}>
@@ -163,21 +187,21 @@ export const EmployeesTable = () => {
         </table>
       </div>
 
-      {employees.length > 0 && totalPages > 1 && (
+      {employees.length > 0 && pagination && pagination.pages > 1 && (
         <div className={styles.employeesTable__pagination}>
           <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
+            onClick={() => handlePageChange(pagination.prev!)}
+            disabled={pagination.prev === null}
             className={styles.employeesTable__pageButton}
           >
             Previous
           </button>
           <span className={styles.employeesTable__pageInfo}>
-            Page {currentPage} of {totalPages}
+            Page {currentPage} of {pagination.pages}
           </span>
           <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(pagination.next!)}
+            disabled={pagination.next === null}
             className={styles.employeesTable__pageButton}
           >
             Next

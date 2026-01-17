@@ -42,7 +42,7 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
     async (department: string, role: EmployeeRole) => {
       try {
         const existing = await fetchBasicInfo();
-        const deptCount = existing.filter((emp) => emp.department === department).length;
+        const deptCount = existing.data.filter((emp) => emp.department === department).length;
         const employeeId = generateEmployeeId(department, deptCount);
         onChange({ ...data, department, role, employeeId });
       } catch (error) {

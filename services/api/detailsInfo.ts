@@ -1,4 +1,6 @@
+import { Details } from '@/types';
 import { request } from './http';
+import { ResponseWithPagination } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_DETAILS_INFO_API!;
 
@@ -28,6 +30,6 @@ export function submitDetails(payload: DetailsPayload) {
   });
 }
 
-export function fetchDetails(page = 1, limit = 10) {
-  return request(`${BASE_URL}/details?_page=${page}&_limit=${limit}`);
+export function fetchDetails(page = 1, limit = 10): Promise<ResponseWithPagination<Details[]>> {
+  return request(`${BASE_URL}/details?_page=${page}&_per_page=${limit}`);
 }
