@@ -33,7 +33,7 @@ export const Autocomplete = ({ label, value = '', placeholder, fetchOptions, onS
   const [options, setOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const debounceRef = useRef<number | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -63,7 +63,7 @@ export const Autocomplete = ({ label, value = '', placeholder, fetchOptions, onS
     debounceRef.current = window.setTimeout(async () => {
       try {
         setLoading(true);
-        setError(false);
+        setError(null);
 
         const result = await fetchOptions(query);
 
@@ -79,9 +79,10 @@ export const Autocomplete = ({ label, value = '', placeholder, fetchOptions, onS
         if (!exactMatch && filteredResults.length > 0) {
           setIsOpen(true);
         }
-      } catch {
+      } catch (err) {
         setOptions([]);
-        setError(true);
+        setError(err instanceof Error ? err.message : 'Failed to fetch options');
+        setIsOpen(true); // Open dropdown to show error
       } finally {
         setLoading(false);
       }
@@ -141,7 +142,7 @@ export const Autocomplete = ({ label, value = '', placeholder, fetchOptions, onS
 
           {error && (
             <div className={`${styles.autocomplete__status} ${styles['autocomplete__status--error']}`}>
-              Mock API not connected
+              {error}
             </div>
           )}
 

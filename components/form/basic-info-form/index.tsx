@@ -28,6 +28,7 @@ const EMPLOYEE_ROLES = ['Ops', 'Admin', 'Engineer', 'Finance'];
 
 export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfoFormProps) => {
   const [emailError, setEmailError] = useState<string>('');
+  const [apiError, setApiError] = useState<string>('');
 
   const handleEmailChange = (value: string) => {
     onChange({ ...data, email: value });
@@ -41,12 +42,14 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
   const generateAndSetEmployeeId = useCallback(
     async (department: string, role: EmployeeRole) => {
       try {
+        setApiError(''); // Clear previous errors
         const existing = await fetchBasicInfo();
         const deptCount = existing.data.filter((emp) => emp.department === department).length;
         const employeeId = generateEmployeeId(department, deptCount);
         onChange({ ...data, department, role, employeeId });
       } catch (error) {
         console.error(error);
+        setApiError(error instanceof Error ? error.message : 'Failed to generate employee ID');
       }
     },
     [data, onChange],
@@ -81,6 +84,12 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
   return (
     <div className={styles.basicInfoForm}>
       <h2 className={styles.basicInfoForm__title}>Basic Information</h2>
+      {apiError && (
+        <div className={styles.basicInfoForm__apiError}>
+          <strong>⚠️ API Error:</strong>
+          <pre>{apiError}</pre>
+        </div>
+      )}
       <form className={styles.basicInfoForm__form}>
         <div className={styles.basicInfoForm__field}>
           <label htmlFor='fullName' className={styles.basicInfoForm__label}>

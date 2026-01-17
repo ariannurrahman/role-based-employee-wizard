@@ -31,6 +31,20 @@ export async function request<T>(url: string, options: RequestOptions = {}): Pro
     return res.json();
   } catch (error) {
     console.error('[API ERROR]', url, error);
+    
+    // Check if it's a network error (backend not running)
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error(
+        `⚠️ Backend server is not running!\n\n` +
+        `Please run the json-server locally:\n\n` +
+        `For Step 1 ('port 4001'):\n` +
+        `  npm run mock:step1\n\n` +
+        `For Step 2 ('port 4002'):\n` +
+        `  npm run mock:step2\n\n` +
+        `See README.md for more details.`
+      );
+    }
+    
     throw error;
   }
 }

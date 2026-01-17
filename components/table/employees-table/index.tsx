@@ -40,7 +40,7 @@ export const EmployeesTable = () => {
         setPagination(detailsResponse);
       } catch (err) {
         console.error('Failed to load employees:', err);
-        setError('Failed to load employees. Please try again.');
+        setError(err instanceof Error ? err.message : 'Failed to load employees');
       } finally {
         setIsLoading(false);
       }
@@ -61,23 +61,23 @@ export const EmployeesTable = () => {
     loadEmployees(page);
   };
  
-  if (error) {
-    return (
-      <div className={styles.employeesTable}>
-        <div className={styles.employeesTable__error}>{error}</div>
-      </div>
-    );
-  }
+ 
 
   return (
     <div className={styles.employeesTable}>
+      
       <div className={styles.employeesTable__header}>
         <h1 className={styles.employeesTable__title}>Employee List</h1>
         <button onClick={handleAddEmployee} className={styles.employeesTable__addButton}>
           + Add Employee
         </button>
       </div>
-
+      
+      {error && ( <div className={styles.employeesTable__errorContainer}>
+        <div className={styles.employeesTable__error}>{error}</div>
+      </div> )}
+ 
+ 
       <div className={styles.employeesTable__tableWrapper}>
         <table className={styles.employeesTable__table}>
           <thead>

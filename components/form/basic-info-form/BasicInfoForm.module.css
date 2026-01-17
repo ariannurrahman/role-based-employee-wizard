@@ -79,6 +79,30 @@
   color: #e74c3c;
 }
 
+.basicInfoForm__apiError {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #856404;
+}
+
+.basicInfoForm__apiError strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.basicInfoForm__apiError pre {
+  margin: 0;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 1.5;
+}
+
 .basicInfoForm__button {
   margin-top: 1rem;
   padding: 0.875rem 1.5rem;
