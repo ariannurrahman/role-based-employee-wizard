@@ -34,7 +34,6 @@ export const EmployeesTable = () => {
 
         // Merge page-scoped data (driven by details)
         const merged = mergeEmployeeData(basicInfoResponse.data, detailsResponse.data);
-        console.log('merged', merged)
         setEmployees(merged);
         setCurrentPage(page);
         setPagination(detailsResponse);
