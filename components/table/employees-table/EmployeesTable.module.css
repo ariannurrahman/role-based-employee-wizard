@@ -128,6 +128,14 @@
   color: #6b7280;
 }
 
+.employeesTable__errorContainer {
+  margin-bottom: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .employeesTable__error {
   color: #ef4444;
   background-color: #fef2f2;
@@ -139,6 +147,7 @@
   line-height: 1.5;
   max-width: 100%;
   overflow-wrap: break-word;
+  padding: 1.5rem;
 }
 
 .employeesTable__pagination {
