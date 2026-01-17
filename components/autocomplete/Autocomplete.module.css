@@ -1,6 +1,7 @@
 .autocomplete {
   position: relative;
   width: 100%;
+  margin-bottom: 1.5rem;
 }
 
 .autocomplete__label {

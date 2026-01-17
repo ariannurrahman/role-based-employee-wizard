@@ -34,10 +34,10 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
 
   return (
     <div className={styles.basicInfoForm}>
-      <h2 className={styles.title}>Basic Information</h2>
-      <form className={styles.form}>
-        <div className={styles.field}>
-          <label htmlFor='fullName' className={styles.label}>
+      <h2 className={styles.basicInfoForm__title}>Basic Information</h2>
+      <form className={styles.basicInfoForm__form}>
+        <div className={styles.basicInfoForm__field}>
+          <label htmlFor='fullName' className={styles.basicInfoForm__label}>
             Full Name
           </label>
           <input
@@ -45,13 +45,13 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
             type='text'
             value={data.fullName || ''}
             onChange={(e) => onChange({ ...data, fullName: e.target.value })}
-            className={styles.input}
+            className={styles.basicInfoForm__input}
             placeholder='Enter full name'
           />
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor='email' className={styles.label}>
+        <div className={styles.basicInfoForm__field}>
+          <label htmlFor='email' className={styles.basicInfoForm__label}>
             Email
           </label>
           <input
@@ -59,10 +59,10 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
             type='email'
             value={data.email || ''}
             onChange={(e) => handleEmailChange(e.target.value)}
-            className={`${styles.input} ${emailError ? styles.inputError : ''}`}
+            className={`${styles.basicInfoForm__input} ${emailError ? styles['basicInfoForm__input--error'] : ''}`}
             placeholder='Enter email address'
           />
-          {emailError && <span className={styles.error}>{emailError}</span>}
+          {emailError && <span className={styles.basicInfoForm__error}>{emailError}</span>}
         </div>
 
         <Autocomplete
@@ -74,15 +74,15 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
           id='department'
         />
 
-        <div className={styles.field}>
-          <label htmlFor='role' className={styles.label}>
+        <div className={styles.basicInfoForm__field}>
+          <label htmlFor='role' className={styles.basicInfoForm__label}>
             Role
           </label>
           <select
             id='role'
             value={data.role || ''}
             onChange={(e) => onChange({ ...data, role: e.target.value as EmployeeRole })}
-            className={styles.select}
+            className={styles.basicInfoForm__select}
           >
             <option value=''>Select role</option>
             {EMPLOYEE_ROLES.map((role) => (
@@ -93,15 +93,15 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
           </select>
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor='employeeId' className={styles.label}>
+        <div className={styles.basicInfoForm__field}>
+          <label htmlFor='employeeId' className={styles.basicInfoForm__label}>
             Employee ID
           </label>
           <input
             id='employeeId'
             type='text'
             value={data.employeeId || ''}
-            className={`${styles.input} ${styles.inputReadonly}`}
+            className={`${styles.basicInfoForm__input} ${styles['basicInfoForm__input--readonly']}`}
             readOnly
             placeholder='Auto-generated'
           />
@@ -112,7 +112,9 @@ export const BasicInfoForm = ({ data, onChange, onNext, isValidForm }: BasicInfo
             type='button'
             onClick={onNext}
             disabled={!isValidForm}
-            className={`${styles.button} ${!isValidForm ? styles.buttonDisabled : ''}`}
+            className={`${styles.basicInfoForm__button} ${
+              !isValidForm ? styles['basicInfoForm__button--disabled'] : ''
+            }`}
           >
             Next
           </button>

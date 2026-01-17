@@ -44,34 +44,34 @@ export const DetailInfoForm = ({ data, onChange, onSubmit, isSubmitting, progres
 
   return (
     <div className={styles.detailInfoForm}>
-      <h2 className={styles.title}>Details & Submit</h2>
-      <form className={styles.form}>
-        <div className={styles.field}>
-          <label htmlFor='photo' className={styles.label}>
+      <h2 className={styles.detailInfoForm__title}>Details & Submit</h2>
+      <form className={styles.detailInfoForm__form}>
+        <div className={styles.detailInfoForm__field}>
+          <label htmlFor='photo' className={styles.detailInfoForm__label}>
             Photo
           </label>
-          <div className={styles.photoSection}>
+          <div className={styles.detailInfoForm__photoSection}>
             <input
               ref={fileInputRef}
               id='photo'
               type='file'
               accept='image/*'
               onChange={handleFileChange}
-              className={styles.fileInput}
+              className={styles.detailInfoForm__fileInput}
             />
-            <button type='button' onClick={() => fileInputRef.current?.click()} className={styles.uploadButton}>
+            <button type='button' onClick={() => fileInputRef.current?.click()} className={styles.detailInfoForm__uploadButton}>
               Choose File
             </button>
             {photoPreview && (
-              <div className={styles.preview}>
-                <Image src={photoPreview} alt='Preview' className={styles.previewImage} width={100} height={100} />
+              <div className={styles.detailInfoForm__preview}>
+                <Image src={photoPreview} alt='Preview' className={styles.detailInfoForm__previewImage} width={100} height={100} />
               </div>
             )}
           </div>
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor='employmentType' className={styles.label}>
+        <div className={styles.detailInfoForm__field}>
+          <label htmlFor='employmentType' className={styles.detailInfoForm__label}>
             Employment Type
           </label>
           <select
@@ -83,7 +83,7 @@ export const DetailInfoForm = ({ data, onChange, onSubmit, isSubmitting, progres
                 employmentType: e.target.value as EmploymentType,
               })
             }
-            className={styles.select}
+            className={styles.detailInfoForm__select}
           >
             <option value=''>Select employment type</option>
             {EMPLOYMENT_TYPES.map((type) => (
@@ -104,28 +104,28 @@ export const DetailInfoForm = ({ data, onChange, onSubmit, isSubmitting, progres
           id='officeLocation'
         /> */}
 
-        <div className={styles.field}>
-          <label htmlFor='notes' className={styles.label}>
+        <div className={styles.detailInfoForm__field}>
+          <label htmlFor='notes' className={styles.detailInfoForm__label}>
             Notes
           </label>
           <textarea
             id='notes'
             value={data.notes || ''}
             onChange={(e) => onChange({ ...data, notes: e.target.value })}
-            className={styles.textarea}
+            className={styles.detailInfoForm__textarea}
             placeholder='Enter notes'
             rows={4}
           />
         </div>
 
         {isSubmitting && (
-          <div className={styles.progressSection}>
-            <div className={styles.progressBar}>
-              <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+          <div className={styles.detailInfoForm__progressSection}>
+            <div className={styles.detailInfoForm__progressBar}>
+              <div className={styles.detailInfoForm__progressFill} style={{ width: `${progress}%` }} />
             </div>
-            <div className={styles.logs}>
+            <div className={styles.detailInfoForm__logs}>
               {logs.map((log, index) => (
-                <div key={index} className={styles.log}>
+                <div key={index} className={styles.detailInfoForm__log}>
                   {log}
                 </div>
               ))}
@@ -137,7 +137,7 @@ export const DetailInfoForm = ({ data, onChange, onSubmit, isSubmitting, progres
           type='button'
           onClick={onSubmit}
           disabled={isSubmitting || !isValidForm}
-          className={`${styles.button} ${(isSubmitting || !isValidForm) ? styles.buttonDisabled : ''}`}
+          className={`${styles.detailInfoForm__button} ${(isSubmitting || !isValidForm) ? styles['detailInfoForm__button--disabled'] : ''}`}
         >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>

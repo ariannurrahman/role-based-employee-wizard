@@ -100,13 +100,13 @@ export const Autocomplete = ({ label, value = '', placeholder, fetchOptions, onS
   }
 
   return (
-    <div className={styles['autocomplete']} ref={wrapperRef}>
-      <label className={styles['autocomplete__label']} htmlFor={id}>
+    <div className={styles.autocomplete} ref={wrapperRef}>
+      <label className={styles.autocomplete__label} htmlFor={id}>
         {label}
       </label>
 
       <input
-        className={styles['autocomplete__input']}
+        className={styles.autocomplete__input}
         id={id}
         value={query}
         placeholder={placeholder}
@@ -123,18 +123,16 @@ export const Autocomplete = ({ label, value = '', placeholder, fetchOptions, onS
       />
 
       {isOpen && (
-        <div className={styles['autocomplete__dropdown']}>
-          {loading && <div className={styles['autocomplete__status']}>Loading…</div>}
+        <div className={styles.autocomplete__dropdown}>
+          {loading && <div className={styles.autocomplete__status}>Loading…</div>}
 
           {error && (
-            <div className={`${styles['autocomplete__status']} ${styles['autocomplete__status--error']}`}>
+            <div className={`${styles.autocomplete__status} ${styles['autocomplete__status--error']}`}>
               Mock API not connected
             </div>
           )}
 
-          {!loading && !error && options.length === 0 && (
-            <div className={styles['autocomplete__status']}>No results</div>
-          )}
+          {!loading && !error && options.length === 0 && <div className={styles.autocomplete__status}>No results</div>}
 
           {!loading &&
             !error &&
@@ -142,7 +140,7 @@ export const Autocomplete = ({ label, value = '', placeholder, fetchOptions, onS
               <button
                 key={option.id}
                 type='button'
-                className={styles['autocomplete__option']}
+                className={styles.autocomplete__option}
                 onClick={() => handleSelect(option)}
               >
                 {option.name}
