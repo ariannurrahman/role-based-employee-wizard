@@ -9,11 +9,11 @@ export interface Location {
 
 export interface DetailsPayload {
   email: string;
-  fullName: string;
-  department: string;
-  role: string;
   employeeId: string;
-  photoBase64?: string;
+  photo?: string;
+  employmentType?: string;
+  officeLocation?: string;
+  notes?: string;
 }
 
 export function fetchLocations(query: string) {

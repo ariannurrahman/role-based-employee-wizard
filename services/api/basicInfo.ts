@@ -9,10 +9,11 @@ export interface Department {
 }
 
 export interface BasicInfoPayload {
+  fullName: string;
   email: string;
-  employmentType: string;
-  location: string;
-  notes?: string;
+  department: string;
+  role: string;
+  employeeId: string;
 }
 
 export function fetchDepartments(query: string) {

@@ -205,10 +205,11 @@ export const WizardForm = () => {
         setProgress(25);
 
         const basicInfoPayload: BasicInfoPayload = {
+          fullName: basicInfo.fullName || '',
           email: basicInfo.email || '',
-          employmentType: details.employmentType || '',
-          location: details.officeLocation || '',
-          notes: details.notes,
+          department: basicInfo.department || '',
+          role: basicInfo.role || '',
+          employeeId: basicInfo.employeeId || '',
         };
 
         await submitBasicInfo(basicInfoPayload);
@@ -226,11 +227,11 @@ export const WizardForm = () => {
 
       const detailsPayload: DetailsPayload = {
         email: basicInfo.email || '',
-        fullName: basicInfo.fullName || '',
-        department: basicInfo.department || '',
-        role: basicInfo.role || '',
         employeeId: basicInfo.employeeId || '',
-        photoBase64: details.photo,
+        photo: details.photo,
+        employmentType: details.employmentType,
+        officeLocation: details.officeLocation,
+        notes: details.notes,
       };
 
       await submitDetails(detailsPayload);

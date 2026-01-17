@@ -1,9 +1,5 @@
-import { fetchBasicInfo, fetchDepartments } from '@/services/api/basicInfo';
+import { EmployeesTable } from '@/components/table/employees-table';
 
-export default async function EmployeesPage() {
-  const employees = await fetchBasicInfo();
-  const departments = await fetchDepartments('');
-  console.log('employees', employees);
-  console.log('departments', departments);
-  return <div>EmployeesPage</div>;
+export default function EmployeesPage() {
+  return <EmployeesTable />;
 }
