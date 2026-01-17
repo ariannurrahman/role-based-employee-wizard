@@ -126,7 +126,6 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  margin-bottom: 1.5rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -201,7 +200,7 @@
 
   .wizardForm__draftStatus {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: 0.5rem;
   }
 
@@ -230,4 +229,3 @@
     font-size: 0.75rem;
   }
 }
-
