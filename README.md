@@ -107,6 +107,15 @@ If you see fetch errors or network failures, make sure both json-server instance
 - Form validation
 - Mock API integration with json-server
 
+## Testing Notes
+- Tests are written using Jest and React Testing Library
+- Covered scenarios:
+    - Autocomplete renders and fetches suggestions correctly
+    - Wizard submit flow executes sequential POST requests with progress and error handling
+    - API calls are mocked at the service layer to isolate UI behavior
+    - Autocomplete is mocked in submit-flow tests to keep focus on submission logic
+    - Navigation hooks are mocked for deterministic behavior
+
 ## Learn More
 
 To learn more about the technologies used:
