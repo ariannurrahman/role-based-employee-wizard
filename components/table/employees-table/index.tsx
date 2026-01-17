@@ -60,15 +60,7 @@ export const EmployeesTable = () => {
   const handlePageChange = (page: number) => {
     loadEmployees(page);
   };
-
-  if (isLoading) {
-    return (
-      <div className={styles.employeesTable}>
-        <div className={styles.employeesTable__loading}>Loading employees...</div>
-      </div>
-    );
-  }
-
+ 
   if (error) {
     return (
       <div className={styles.employeesTable}>
@@ -98,7 +90,12 @@ export const EmployeesTable = () => {
             </tr>
           </thead>
           <tbody>
-            {employees.length === 0 ? (
+
+            {isLoading ? 
+              <tr>
+                <td colSpan={5} className={styles.employeesTable__loading}>Loading employees...</td>
+              </tr>
+            : employees.length === 0 ? (
               <tr>
                 <td colSpan={5} className={styles.employeesTable__empty}>
                   No employees found. Click &quot;+ Add Employee&quot; to add one.
