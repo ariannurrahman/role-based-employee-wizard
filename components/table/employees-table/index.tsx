@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { fetchBasicInfo } from '@/services/api/basicInfo';
 import { fetchDetails } from '@/services/api/detailsInfo';
@@ -9,27 +9,41 @@ import styles from './EmployeesTable.module.css';
 import { Pagination } from '@/services/api/types';
 import { MergedEmployee, mergeEmployeeData } from './utils';
 
-
+const LIMIT_OPTIONS = [1, 5, 10, 20, 50];
 
 export const EmployeesTable = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [employees, setEmployees] = useState<MergedEmployee[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  
+  // Get initial values from URL or use defaults
+  const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
+  const limitFromUrl = parseInt(searchParams.get('limit') || '10', 10);
+  
+  const [currentPage, setCurrentPage] = useState(pageFromUrl);
+  const [limit, setLimit] = useState(limitFromUrl);
   const [pagination, setPagination] = useState<Pagination | null>(null);
-  const limit = 1;
+
+  // Update URL parameters
+  const updateUrl = useCallback((page: number, itemsPerPage: number) => {
+    const params = new URLSearchParams();
+    params.set('page', page.toString());
+    params.set('limit', itemsPerPage.toString());
+    router.push(`?${params.toString()}`, { scroll: false });
+  }, [router]);
 
   const loadEmployees = useCallback(
-    async (page: number) => {
+    async (page: number, itemsPerPage: number) => {
       setIsLoading(true);
       setError(null);
 
       try {
         // Fetch both APIs with same pagination
         const [basicInfoResponse, detailsResponse] = await Promise.all([
-          fetchBasicInfo(page, limit),
-          fetchDetails(page, limit),
+          fetchBasicInfo(page, itemsPerPage),
+          fetchDetails(page, itemsPerPage),
         ]);
 
         // Merge page-scoped data (driven by details)
@@ -44,20 +58,28 @@ export const EmployeesTable = () => {
         setIsLoading(false);
       }
     },
-    [limit]
+    []
   );
 
   useEffect(() => {
-    loadEmployees(1);
+    loadEmployees(currentPage, limit);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentPage, limit]);
 
   const handleAddEmployee = () => {
     router.push('/wizard');
   };
 
   const handlePageChange = (page: number) => {
-    loadEmployees(page);
+    updateUrl(page, limit);
+    setCurrentPage(page);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    // Reset to page 1 when changing limit
+    updateUrl(1, newLimit);
+    setLimit(newLimit);
+    setCurrentPage(1);
   };
  
  
@@ -67,9 +89,29 @@ export const EmployeesTable = () => {
       
       <div className={styles.employeesTable__header}>
         <h1 className={styles.employeesTable__title}>Employee List</h1>
-        <button onClick={handleAddEmployee} className={styles.employeesTable__addButton}>
-          + Add Employee
-        </button>
+        <div className={styles.employeesTable__headerActions}>
+          <div className={styles.employeesTable__limitSelector}>
+            <label htmlFor="limit-select" className={styles.employeesTable__limitLabel}>
+              Show:
+            </label>
+            <select
+              id="limit-select"
+              value={limit}
+              onChange={(e) => handleLimitChange(Number(e.target.value))}
+              className={styles.employeesTable__limitSelect}
+            >
+              {LIMIT_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            <span className={styles.employeesTable__limitLabel}>per page</span>
+          </div>
+          <button onClick={handleAddEmployee} className={styles.employeesTable__addButton}>
+            + Add Employee
+          </button>
+        </div>
       </div>
       
       {error && ( <div className={styles.employeesTable__errorContainer}>
